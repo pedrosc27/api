@@ -1,21 +1,14 @@
 package com.greencake.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.*;
+import org.springframework.web.bind.annotation.*;
 
 import com.greencake.entities.Usuario;
 import com.greencake.service.UsuarioService;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/usuario")
 @CrossOrigin(origins="*")
 public class UsuarioController {
 
@@ -23,32 +16,71 @@ public class UsuarioController {
 	private UsuarioService usuarioService;
 	
 	
-	@GetMapping("/usuario") //localhost:8080/api/customer
-	public @ResponseBody Iterable<Usuario> obtenerUsuarios() {
-		return usuarioService.obtenerUsuarios();
+	@GetMapping //localhost:8080/api/usuario
+	@ResponseBody 
+	//ResponseEntity configura la respuesta http
+	public ResponseEntity<Iterable<Usuario>> getAllUser() {		
+		return new ResponseEntity<Iterable<Usuario>>
+			(usuarioService.findAllUsers(), HttpStatus.OK);
 	}
 	
-	@GetMapping("/usuario/{id}") //localhost:8080/api/customer/id
-	public @ResponseBody Usuario buscarUsuarioPorId(@PathVariable("id") Integer id) {
-		return usuarioService.buscarUsuarioPorId(id);
+	@GetMapping("/{id}") //localhost:8080/api/usuario/id
+	@ResponseBody
+	public ResponseEntity<?> getUserById(@PathVariable("id") Integer id) {
+		try {
+			return new ResponseEntity<Usuario>(usuarioService.findUserById(id), HttpStatus.OK);
+		}
+		catch (IllegalStateException e){
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.NOT_FOUND);
+		}
+		catch (Exception e) {
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
 	}
 	
-	@PostMapping("/usuario/agregar")
-	public @ResponseBody String agregarUsuario(
-			@RequestParam String nombre, @RequestParam String apellido, 
-			@RequestParam String email, @RequestParam String password) {
-		Usuario usuario = new Usuario();
-		usuario.setNombre_usuario(nombre);
-		usuario.setApellido_usuario(apellido);
-		usuario.setEmail(email);
-		usuario.setPassword(password);
-		usuarioService.guardarUsuario(usuario);
-		return "guardado";
+	@PostMapping //localhost:8080/api/usuario
+	@ResponseBody
+	public ResponseEntity<?> addNewUser(@RequestBody Usuario usuario) {
+		try {
+			//Se guarda el cliente y lo retorna con el id asignado.
+			return new ResponseEntity<Usuario>(usuarioService.saveUser(usuario), HttpStatus.CREATED);
+		}
+		catch (IllegalStateException e){
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+		catch (Exception e) {
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+					
 	}
 	
-	@DeleteMapping("/usuario/{id}")
-	public @ResponseBody void eliminarUsuarioPorId(@PathVariable("id") Integer id) {
-		usuarioService.borrarUsuario(id);
+	@PutMapping("/update")
+	@ResponseBody
+	public ResponseEntity<?> updateUser(@RequestBody Usuario usuario) {	
+		try {
+			return new ResponseEntity<Usuario>(usuarioService.updateUser(usuario), HttpStatus.OK);
+		}
+		catch (IllegalStateException e){
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+		catch (Exception e) {
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}			
+	}
+	
+	@DeleteMapping("/{id}") //localhost:8080/api/usuario/id
+	@ResponseBody
+	public ResponseEntity<?> deleteUser(@PathVariable("id") Integer id) {
+		try {			
+			return new ResponseEntity<String>(usuarioService.deleteUserById(id), HttpStatus.OK);
+		}
+		catch (IllegalStateException e){
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+		catch (Exception e) {
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}		
+	
 	}
 	
 }

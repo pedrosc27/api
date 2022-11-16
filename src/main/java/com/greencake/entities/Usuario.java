@@ -1,38 +1,36 @@
 package com.greencake.entities;
 import java.sql.Timestamp;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.data.annotation.CreatedDate;
+//import org.springframework.data.annotation.CreatedDate;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name="usuarios")
 public class Usuario {
+	public static final int NOMBRE_LENGTH = 60;
+	public static final int EMAIL_LENGTH = 60;
+	public static final int CONTRASENA_LENGTH = 60;
 
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="usuario_id")
 	private Integer idcliente;
-	@Column(name="nombre_usuario")
+	@Column(name="nombre_usuario", length=NOMBRE_LENGTH)
 	private String nombre_usuario;
-	@Column(name="apellido_usuario")
-	private String apellido_usuario;
-	@Column(name="email")
+	@Column(name="email",updatable=false, length=EMAIL_LENGTH)
 	private String email;
-	@JsonIgnore
+	//@NotNull
+	@Column(name="password", length=CONTRASENA_LENGTH)
 	private String password;
 	@CreationTimestamp 
 	@Column(name="fecha_alta")
 	private Timestamp fecha_alta;
+	@Column(name="is_active")
+	private boolean isActive;
 	
 	public Usuario() {}
 	
@@ -47,12 +45,6 @@ public class Usuario {
 	}
 	public void setNombre_usuario(String nombre_usuario) {
 		this.nombre_usuario = nombre_usuario;
-	}
-	public String getApellido_usuario() {
-		return apellido_usuario;
-	}
-	public void setApellido_usuario(String apellido_usuario) {
-		this.apellido_usuario = apellido_usuario;
 	}
 	public String getEmail() {
 		return email;
@@ -71,6 +63,12 @@ public class Usuario {
 	}
 	public void setFecha_alta(Timestamp fecha_alta) {
 		this.fecha_alta = fecha_alta;
+	}
+	public Boolean getIsActive() {
+		return isActive;
+	}
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
 	}
 
 	
