@@ -12,4 +12,5 @@ public interface IProducto {
 	boolean existeProducto(Integer id);
 	void guardarProducto(Producto producto);
 	void borrarProducto(Integer id);
+	Producto actualizarProducto(Producto producto);
 }

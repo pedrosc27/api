@@ -45,6 +45,23 @@ public class ProductoService implements IProducto{
 		
 	}
 
+	@Override
+	public Producto actualizarProducto(Producto producto) {
+
+		Producto productoNuevo = buscarProductoPorId(producto.getProducto_id());
+		productoNuevo.setNombre_producto(producto.getNombre_producto());
+		productoNuevo.setDescripcion_producto(producto.getDescripcion_producto());
+		productoNuevo.setCategoria_nombre(producto.getCategoria_nombre());
+		productoNuevo.setImagen(producto.getImagen());
+		//guardarProducto(productoNuevo);
+		//return productoNuevo;
+		return productoRepository.save(productoNuevo);
+	}
+
+	
+	
+
+
 
 
 }

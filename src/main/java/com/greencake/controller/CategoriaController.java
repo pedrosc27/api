@@ -20,11 +20,9 @@ import com.greencake.service.CategoriaServicio;
 @CrossOrigin(origins="*")
 public class CategoriaController {
 
-	
 	@Autowired
 	private CategoriaServicio categoriaService;
-	
-	
+		
 	@GetMapping("/categoria") //localhost:8080/api/customer
 	public @ResponseBody Iterable<Categoria> obtenerCategorias() {
 		return categoriaService.obtenerCategorias();

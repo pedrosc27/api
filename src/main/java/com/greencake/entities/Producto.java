@@ -28,9 +28,8 @@ public class Producto {
 	@Column(name="imagen")
 	private String imagen;
 	
-	@ManyToOne
-	@JoinColumn(name = "categoria_id")
-	private Categoria categoria;
+	@Column(name="categoria")
+	private String categoria;
 	
 	public Producto() {
 		
@@ -68,13 +67,15 @@ public class Producto {
 		this.imagen = imagen;
 	}
 
-	public Categoria getCategoria() {
+	public String getCategoria_nombre() {
 		return categoria;
 	}
 
-	public void setCategoria(Categoria categoria) {
-		this.categoria = categoria;
-	}	
+	public void setCategoria_nombre(String categoria_nombre) {
+		this.categoria = categoria_nombre;
+	}
+
+	
 	
 
 
