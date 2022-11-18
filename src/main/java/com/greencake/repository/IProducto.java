@@ -10,7 +10,7 @@ public interface IProducto {
 	Iterable<Producto> obtenerProductos();
 	Producto buscarProductoPorId(Integer id);
 	boolean existeProducto(Integer id);
-	void guardarProducto(Producto producto);
+	Producto guardarProducto(Producto producto);
 	void borrarProducto(Integer id);
 	Producto actualizarProducto(Producto producto);
 }
