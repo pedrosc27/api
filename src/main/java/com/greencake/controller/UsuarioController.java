@@ -39,7 +39,7 @@ public class UsuarioController {
 	}
 	
 	
-	@GetMapping("/login") //localhost:8080/api/usuario/login
+	@PostMapping("/login") //localhost:8080/api/usuario/login
 	@ResponseBody
 	public ResponseEntity<?> getUserByEmail(@RequestBody Usuario usuario) {
 		try {
