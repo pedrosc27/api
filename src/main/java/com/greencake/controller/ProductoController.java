@@ -1,6 +1,8 @@
 package com.greencake.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -24,7 +26,6 @@ import com.greencake.service.ProductoService;
 @RequestMapping("/api")
 @CrossOrigin(origins="*")
 public class ProductoController {
-
 	
 	@Autowired
 	private ProductoService productoService;
@@ -32,40 +33,89 @@ public class ProductoController {
 	@Autowired
 	ProductoCRUDRepository productoRepository;
 	
-	@GetMapping("/producto") //localhost:8080/api/customer
-	public @ResponseBody Iterable<Producto> obtenerProductos() {
-		
-		return productoService.obtenerProductos();
+	@GetMapping("/producto") 
+	@ResponseBody
+	public ResponseEntity<?> obtenerProductos() {
+		try{
+			return new ResponseEntity<Iterable<Producto>>(productoService.obtenerProductos(), HttpStatus.OK);
+		}    
+		catch(Exception e) {
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
 	}
 	
-	@GetMapping("/producto/{id}") //localhost:8080/api/customer/id
-	public @ResponseBody Producto buscarProductoPorId(@PathVariable("id") Integer id) {
-		
-		return productoService.buscarProductoPorId(id);
+	@GetMapping("/producto/id") 
+	@ResponseBody
+	public ResponseEntity<?> buscarProductoPorId(@RequestParam Integer id) {
+		try{
+			return new ResponseEntity<Producto>(productoService.buscarProductoPorId(id), HttpStatus.OK);
+		} 
+		catch (IllegalStateException e){
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+		catch(Exception e) {
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
 	}	
 	
-	@GetMapping("/producto/categoria/{categoria}") //localhost:8080/api/customer/id
-	public @ResponseBody Iterable<Producto>  buscarProductosPorCategoria(@PathVariable("categoria")  String categoria) {
-		return productoRepository.findByCategoria(categoria);
+	@GetMapping("/producto/productos")
+	@ResponseBody 
+	public ResponseEntity<?> paginationProductos(@RequestParam int pagina) {
+		try{
+			return new ResponseEntity<Page<Producto>>(productoService.paginationProductos(pagina), HttpStatus.OK);
+		} 
+		catch (IllegalStateException e){
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+		catch(Exception e) {
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+	}		
+
+	@GetMapping("/producto/categoria") 
+	@ResponseBody 
+	public ResponseEntity<?>  buscarProductosPorCategoria(@RequestParam("categoria")  String categoria) {
+		try{
+			return new ResponseEntity<Iterable<Producto>>(productoRepository.findByCategoria(categoria), HttpStatus.OK);
+		} 
+		catch (IllegalStateException e){
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+		catch(Exception e) {
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
 	}
+
+	@GetMapping("/producto/categoria/pagina") 
+	@ResponseBody 
+	public ResponseEntity<?>  buscarProductosPorCategoriaPagination(@RequestParam("categoria")  String categoria, @RequestParam("pagina")  int pagina) {
+		int index = pagina -1;
+		try{
+			
+			return new ResponseEntity<Page<Producto>>(productoRepository.findByCategoria(PageRequest.of(index, 12),categoria), HttpStatus.OK);
+		} 
+		catch (IllegalStateException e){
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+		catch(Exception e) {
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+	}	
+	
 	
 	@PostMapping("/producto/agregar")
-	public @ResponseBody String guardarProducto(
-			@RequestParam String nombre, @RequestParam String imagen, 
-			@RequestParam String categoria) {
-	
-		Producto producto = new Producto();
-		producto.setNombre_producto(nombre);
-		producto.setImagen(imagen);
-		producto.setCategoria_nombre(categoria);
-		productoService.guardarProducto(producto);
-		return "guardado";
+	@ResponseBody
+	public ResponseEntity<?> agregarUsuario(@RequestBody Producto producto){
+	try {
+			return new ResponseEntity<Producto>(productoService.guardarProducto(producto), HttpStatus.OK);
+		}
+		catch (IllegalStateException e){
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+		catch (Exception e) {
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
 	}
-	
-	@DeleteMapping("/producto/{id}")
-	public @ResponseBody void borrarProducto(@PathVariable("id") Integer id) {
-		productoService.borrarProducto(id);
-	}	
 	
 	@PutMapping("/producto/actualizar")
 	@ResponseBody
@@ -80,6 +130,14 @@ public class ProductoController {
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 	}
+	
+	@DeleteMapping("/producto/{id}")
+	@ResponseBody 
+	public void borrarProducto(@PathVariable("id") Integer id) {
+		productoService.borrarProducto(id);
+	}	
+	
+
 	
 	
 }

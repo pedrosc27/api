@@ -1,6 +1,8 @@
 package com.greencake.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.greencake.entities.Producto;
@@ -34,8 +36,8 @@ public class ProductoService implements IProducto{
 	}
 
 	@Override
-	public void guardarProducto(Producto producto) {
-		productoRepository.save(producto);
+	public Producto guardarProducto(Producto producto) {
+		return productoRepository.save(producto);
 		
 	}
 
@@ -47,17 +49,21 @@ public class ProductoService implements IProducto{
 
 	@Override
 	public Producto actualizarProducto(Producto producto) {
-
 		Producto productoNuevo = buscarProductoPorId(producto.getProducto_id());
 		productoNuevo.setNombre_producto(producto.getNombre_producto());
 		productoNuevo.setDescripcion_producto(producto.getDescripcion_producto());
 		productoNuevo.setCategoria_nombre(producto.getCategoria_nombre());
 		productoNuevo.setImagen(producto.getImagen());
-		//guardarProducto(productoNuevo);
-		//return productoNuevo;
 		return productoRepository.save(productoNuevo);
 	}
 
+	public Page<Producto> paginationProductos(int pagina) {
+		int index = pagina -1;
+		Page<Producto> productos = productoRepository.findAll(PageRequest.of(index, 12));
+		// TODO Auto-generated method stub
+		return productos;
+	}
+	
 	
 	
 
