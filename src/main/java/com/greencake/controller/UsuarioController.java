@@ -38,7 +38,23 @@ public class UsuarioController {
 		}
 	}
 	
-	@PostMapping //localhost:8080/api/usuario
+	
+	@GetMapping("/login") //localhost:8080/api/usuario/login
+	@ResponseBody
+	public ResponseEntity<?> getUserByEmail(@RequestBody Usuario usuario) {
+		try {
+			return new ResponseEntity<String>(usuarioService.findUserByEmail(usuario), HttpStatus.OK);
+		}
+		catch (IllegalStateException e){
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.NOT_FOUND);
+		}
+		catch (Exception e) {
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	
+	@PostMapping("/register") //localhost:8080/api/usuario
 	@ResponseBody
 	public ResponseEntity<?> addNewUser(@RequestBody Usuario usuario) {
 		try {

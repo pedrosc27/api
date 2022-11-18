@@ -8,7 +8,7 @@ import com.greencake.entities.Usuario;
 public interface IUsuario {
 	public Iterable<Usuario> findAllUsers();
 	public Usuario findUserById(Integer usuario_id);
-	public Usuario findUserByEmail(Usuario usuario);		
+	public String findUserByEmail(Usuario usuario);		
 	public boolean existsUserById(Integer usuario_id);
 	public boolean existsUserByEmail(String email);
 	public Usuario saveUser(Usuario usuario) throws Exception;

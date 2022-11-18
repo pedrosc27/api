@@ -25,8 +25,17 @@ public class UsuarioService implements IUsuario{
 	}
 
 	@Override
-	public Usuario findUserByEmail(Usuario usuario) {
-		return usuarioRepository.findByEmail(usuario.getEmail());
+	public String findUserByEmail(Usuario usuario){
+		boolean existeUsuario = usuarioRepository.existsByEmail(usuario.getEmail());
+		if(existeUsuario) {
+			Usuario nuevoUsuario = usuarioRepository.findByEmail(usuario.getEmail());
+			if(usuario.getPassword().equals(nuevoUsuario.getPassword()))
+				return "Bienvenido";
+			else
+				return "Contraseña incorrecta";	
+		}else {
+			return "El usuario no existe";
+		}
 	}
 
 	@Override
@@ -42,8 +51,14 @@ public class UsuarioService implements IUsuario{
 	@Override
 	public Usuario saveUser(Usuario usuario) throws Exception {
 		usuario.setIsActive(true);
-		if (!(usuario.getNombre_usuario().length() < Usuario.NOMBRE_LENGTH))			
-			throw new IllegalStateException("El nombre es mayor a  "+ Usuario.NOMBRE_LENGTH);
+		if(existsUserByEmail(usuario.getEmail()))
+			throw new IllegalStateException("El usuario ya esta existe");
+		else {
+			if (!(usuario.getNombre_usuario().length() < Usuario.NOMBRE_LENGTH))			
+				throw new IllegalStateException("El nombre es mayor a  "+ Usuario.NOMBRE_LENGTH);
+			if((usuario.getPassword().equals("")) || (usuario.getPassword().length() < 8))
+				throw new IllegalStateException("La contraseña no es válida");
+		}
 		
 		return usuarioRepository.save(usuario);
 	}

@@ -7,6 +7,7 @@ import com.greencake.entities.Usuario;
 
 @Repository
 public interface UsuarioCRUDRepository extends CrudRepository<Usuario, Integer>{
+	//Iterable<Usuario> findByEmail(String email);
 	Usuario findByEmail(String email);
 	boolean existsByEmail(String email);
 }
